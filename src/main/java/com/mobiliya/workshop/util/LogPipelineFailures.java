@@ -1,6 +1,5 @@
 package com.mobiliya.workshop.util;
 
-import com.mobiliya.workshop.dataflow.pipeline.DataflowPipelineBuilder;
 import com.mobiliya.workshop.dataflow.pipeline.steps.FailureMetaData;
 import org.apache.beam.sdk.coders.SerializableCoder;
 import org.apache.beam.sdk.extensions.jackson.AsJsons;
@@ -12,23 +11,17 @@ import java.io.Serializable;
 
 public class LogPipelineFailures implements Serializable {
 
-    private static final String FAILURE_TEXT = "LogFailures";
-    public static final TupleTag<FailureMetaData> FAILURE_TAG = new TupleTag<FailureMetaData>() {
-    };
+  public static final TupleTag<FailureMetaData> FAILURE_TAG = new TupleTag<FailureMetaData>() {};
+  private static final String FAILURE_TEXT = "LogFailures";
 
+  // Log the pipeline failures on queue
+  public static void logPipelineFailuresQueue(
+      String outputTopic, final PCollectionTuple eventPayloadTuple) {
 
-
-    // Log the pipeline failures on queue
-    public static void logPipelineFailuresQueue(
-            String outputTopic,
-            final PCollectionTuple eventPayloadTuple) {
-
-        eventPayloadTuple
-                .get(FAILURE_TAG)
-                .setCoder(SerializableCoder.of(FailureMetaData.class))
-                .apply("Convert Event Payload Error to JSon", AsJsons.of(FailureMetaData.class))
-                .apply(
-                        FAILURE_TEXT.concat("<< YourDoFnHere >>"),
-                        PubsubIO.writeStrings().to(outputTopic));
-    }
+    eventPayloadTuple
+        .get(FAILURE_TAG)
+        .setCoder(SerializableCoder.of(FailureMetaData.class))
+        .apply("Convert Event Payload Error to JSon", AsJsons.of(FailureMetaData.class))
+        .apply(FAILURE_TEXT.concat("<< YourDoFnHere >>"), PubsubIO.writeStrings().to(outputTopic));
+  }
 }

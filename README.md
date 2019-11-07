@@ -14,7 +14,7 @@ $ mvn install -DskipTests
 ```
 Run pipeline locally
 ```sh
-$ mvn -e -Pdirect-runner compile exec:java -Dexec.mainClass=com.mobiliya.workshop.pipeline.DataflowPipelineBuilder.StarterPipelineApplication -Dexec.args="--project=dev  --ingestionTopic=ingestion_dev --databaseURL=jdbc:postgresql://localhost:5432/postgres --databaseUserName=postgres --databasePassword=postgres --failureDataTopic=_dev_failure_data  --runner=DirectRunner"
+$ mvn -e -Pdirect-runner compile exec:java -Dexec.mainClass=com.mobiliya.workshop.pipeline.DataflowPipelineBuilder.StarterPipelineApplication -Dexec.args="--project=dev  --ingestionTopic=ingestion_dev --databaseURL=jdbc:postgresql://localhost:5432/postgres --databaseUserName=postgres --databasePassword=postgres --failureDataTopic=_dev_failure_data  --runner=DirectRunner --fixedWindowLength=2 --kafkaBrokerUrl=broker:9092 --inputKafkaTopicName=input-log-topic"
 ```
 Analyze project with SonarQube Server
 ```sh

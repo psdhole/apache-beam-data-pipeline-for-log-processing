@@ -6,25 +6,21 @@ import org.apache.beam.sdk.options.Validation;
 
 public interface DataPipelineOptions extends GcpOptions {
 
-  //@Validation.Required
   @Description("Topic to read payload from ingestion queue")
   String getCimEventsTopic();
 
   void setCimEventsTopic(String cimEventsTopic);
 
-  //@Validation.Required
   @Description("Database URL command line argument.")
   String getDatabaseURL();
 
   void setDatabaseURL(String databaseURL);
 
-  //@Validation.Required
   @Description("Database USERNAME command line argument.")
   String getDatabaseUserName();
 
   void setDatabaseUserName(String databaseUserName);
 
-  //@Validation.Required
   @Description("Database PASSWORD command line argument.")
   String getDatabasePassword();
 
@@ -34,4 +30,22 @@ public interface DataPipelineOptions extends GcpOptions {
   String getFailureDataTopic();
 
   void setFailureDataTopic(String topic);
+
+  @Validation.Required
+  @Description("Kafka Topic to read input payload from ingestion queue")
+  String getInputKafkaTopicName();
+
+  void setInputKafkaTopicName(String inputKafkaTopicName);
+
+  @Validation.Required
+  @Description("Kafka broker url to read payload from ingestion queue")
+  String getKafkaBrokerUrl();
+
+  void setKafkaBrokerUrl(String kafkaBrokerUrl);
+
+  @Validation.Required
+  @Description("Window length to read to read payload from Kafka ingestion queue")
+  int getFixedWindowLength();
+
+  void setFixedWindowLength(int fixedWindowLength);
 }

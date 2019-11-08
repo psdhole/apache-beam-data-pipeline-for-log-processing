@@ -48,4 +48,10 @@ public interface DataPipelineOptions extends GcpOptions {
   int getFixedWindowLength();
 
   void setFixedWindowLength(int fixedWindowLength);
+
+  @Validation.Required
+  @Description("Number of shards to create while writing the data to the output file")
+  int getNumShards();
+
+  void setNumShards(int numShards);
 }

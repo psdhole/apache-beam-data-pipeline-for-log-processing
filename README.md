@@ -24,7 +24,7 @@ $ docker-compose up -d
 
 Run pipeline locally
 ```sh
-$ mvn -e -Pdirect-runner compile exec:java -Dexec.mainClass=com.mobiliya.workshop.pipeline.DataflowPipelineBuilder.StarterPipelineApplication -Dexec.args="--project=dev  --ingestionTopic=ingestion_dev --failureDataTopic=_dev_failure_data  --runner=DirectRunner --fixedWindowLength=2 --kafkaBrokerUrl=localhost:9092 --inputKafkaTopicName=input-log-topic --numShards=5"
+$ mvn -e -Pdirect-runner compile exec:java -Dexec.mainClass=com.mobiliya.workshop.pipeline.DataflowPipelineBuilder.StarterPipelineApplication -Dexec.args="--project=dev  --ingestionTopic=ingestion_dev --failureDataTopic=_dev_failure_data  --runner=DirectRunner --windowSize=2 --kafkaBrokerUrl=localhost:9092 --inputKafkaTopicName=input-log-topic --numShards=5"
 ```
 Analyze project with SonarQube Server
 ```sh

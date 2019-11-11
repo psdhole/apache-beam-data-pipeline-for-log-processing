@@ -44,10 +44,10 @@ public interface DataPipelineOptions extends GcpOptions {
   void setKafkaBrokerUrl(String kafkaBrokerUrl);
 
   @Validation.Required
-  @Description("Window length to read to read payload from Kafka ingestion queue")
-  int getFixedWindowLength();
+  @Description("Window size to read to read payload from Kafka ingestion queue")
+  int getWindowSize();
 
-  void setFixedWindowLength(int fixedWindowLength);
+  void setWindowSize(int windowSize);
 
   @Validation.Required
   @Description("Number of shards to create while writing the data to the output file")

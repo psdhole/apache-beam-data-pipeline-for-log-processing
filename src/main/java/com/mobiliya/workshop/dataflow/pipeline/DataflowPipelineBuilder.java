@@ -2,6 +2,7 @@ package com.mobiliya.workshop.dataflow.pipeline;
 
 import com.google.common.collect.ImmutableMap;
 import com.mobiliya.workshop.dataflow.pipeline.options.DataPipelineOptions;
+import com.mobiliya.workshop.dataflow.pipeline.steps.CSVWriter;
 import com.mobiliya.workshop.dataflow.pipeline.steps.JSONParser;
 import com.mobiliya.workshop.exception.DataPipelineException;
 import com.mobiliya.workshop.util.CommonConstants;
@@ -29,7 +30,9 @@ public class DataflowPipelineBuilder implements Serializable {
     if (StringUtils.isEmpty(projectName)) {
       throw new DataPipelineException("Project is missing from pipeline options.");
     }
+
     final Pipeline pipeline = Pipeline.create(options);
+
     pipeline
         .apply(
             KafkaIO.<String, String>read()
@@ -42,10 +45,11 @@ public class DataflowPipelineBuilder implements Serializable {
                         CommonConstants.AUTO_OFFSET_RESET_KEY,
                         CommonConstants.AUTO_OFFSET_RESET_VALUE))
                 .withoutMetadata())
+            .apply("Create Key Pair", MapElements.via(new JSONParser()))
         .apply(
             "Applying Fixed window to read stream from Kafka",
             Window.<KV<String, String>>into(
-                    FixedWindows.of(Duration.standardMinutes(options.getFixedWindowLength())))
+                    FixedWindows.of(Duration.standardMinutes(options.getWindowSize())))
                 .triggering(
                     Repeatedly.forever(
                         AfterFirst.of(
@@ -54,7 +58,7 @@ public class DataflowPipelineBuilder implements Serializable {
                                 .plusDelayOf(Duration.standardMinutes(2)))))
                 .withAllowedLateness(Duration.ZERO)
                 .discardingFiredPanes())
-        .apply("Extract the JSON Fields", MapElements.via(new JSONParser()))
+            .apply("Extract the JSON Fields", MapElements.via(new CSVWriter()))
         .apply(
             TextIO.write()
                 .withWindowedWrites()

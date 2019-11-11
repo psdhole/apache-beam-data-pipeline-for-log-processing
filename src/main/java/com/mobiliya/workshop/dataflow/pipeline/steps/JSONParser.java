@@ -7,22 +7,17 @@ import org.apache.beam.sdk.transforms.SimpleFunction;
 import org.apache.beam.sdk.values.KV;
 
 @Slf4j
-public class JSONParser extends SimpleFunction<KV<String, String>, String> {
+public class JSONParser extends SimpleFunction<KV<String, String>, KV<String, String>> {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public String apply(KV<String, String> inputJSON) {
+  public KV<String, String> apply(KV<String, String> inputJSON) {
     LogMessage logMessage = new LogMessage();
     try {
       logMessage = new ObjectMapper().readValue(inputJSON.getValue(), LogMessage.class);
     } catch (Exception e) {
       log.debug("Error while parsing JSON :", e);
     }
-    return String.join(
-        ",",
-        logMessage.getLogType(),
-        logMessage.getLogSeverity(),
-        logMessage.getLogPriority(),
-        logMessage.getLogDescription());
+    return KV.of(logMessage.getLogType(), inputJSON.getValue());
   }
 }

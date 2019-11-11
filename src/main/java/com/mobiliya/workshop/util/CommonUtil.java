@@ -1,6 +1,6 @@
 package com.mobiliya.workshop.util;
 
-import com.mobiliya.workshop.dataflow.pipeline.steps.FailureMetaData;
+import com.mobiliya.workshop.exception.FailureMetaData;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Preconditions;

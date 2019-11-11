@@ -1,6 +1,6 @@
 package com.mobiliya.workshop.util;
 
-import com.mobiliya.workshop.dataflow.pipeline.steps.FailureMetaData;
+import com.mobiliya.workshop.exception.FailureMetaData;
 import org.apache.beam.sdk.coders.SerializableCoder;
 import org.apache.beam.sdk.extensions.jackson.AsJsons;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;

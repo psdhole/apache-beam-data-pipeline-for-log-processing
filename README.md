@@ -1,6 +1,10 @@
-
 # data-pipeline
-ETL &amp; Persist component deployed as s streaming job for storing the messages being read from ingestion-queue
+Data pipline application to read error log data from Kafka and apply Composite Triggers to emit the results to the csv file based on below conditions.
+   
+    1 : If the error count is 10 OR 
+    2 : If high severity (severity-1) error occurs OR 
+    3 : If high Priority (priority-1) error occurs. 
+
 
 ### Deploy Project Locally
 In a development environment, use the following call to  cleanly build and install artifacts into the local repository.
@@ -12,9 +16,15 @@ Skip the tests via command line by executing the following command:
 ```sh
 $ mvn install -DskipTests
 ```
+
+Run/start the Kafka broker locally using below command. 
+```sh
+$ docker-compose up -d
+```
+
 Run pipeline locally
 ```sh
-$ mvn -e -Pdirect-runner compile exec:java -Dexec.mainClass=com.mobiliya.workshop.pipeline.DataflowPipelineBuilder.StarterPipelineApplication -Dexec.args="--project=dev  --ingestionTopic=ingestion_dev --failureDataTopic=_dev_failure_data  --runner=DirectRunner --fixedWindowLength=2 --kafkaBrokerUrl=broker:9092 --inputKafkaTopicName=input-log-topic --numShards=5"
+$ mvn -e -Pdirect-runner compile exec:java -Dexec.mainClass=com.mobiliya.workshop.pipeline.DataflowPipelineBuilder.StarterPipelineApplication -Dexec.args="--project=dev  --ingestionTopic=ingestion_dev --failureDataTopic=_dev_failure_data  --runner=DirectRunner --fixedWindowLength=2 --kafkaBrokerUrl=localhost:9092 --inputKafkaTopicName=input-log-topic --numShards=5"
 ```
 Analyze project with SonarQube Server
 ```sh

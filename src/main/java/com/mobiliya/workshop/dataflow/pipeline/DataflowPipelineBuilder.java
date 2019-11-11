@@ -49,7 +49,7 @@ public class DataflowPipelineBuilder implements Serializable {
                 .triggering(
                     Repeatedly.forever(
                         AfterFirst.of(
-                            AfterPane.elementCountAtLeast(90),
+                            AfterPane.elementCountAtLeast(10),
                             AfterProcessingTime.pastFirstElementInPane()
                                 .plusDelayOf(Duration.standardMinutes(2)))))
                 .withAllowedLateness(Duration.ZERO)
@@ -58,6 +58,7 @@ public class DataflowPipelineBuilder implements Serializable {
         .apply(
             TextIO.write()
                 .withWindowedWrites()
+                .withHeader(CommonConstants.CSV_HEADERS)
                 .withShardNameTemplate(CommonConstants.SHARDING_TEMPLATE_VALUE)
                 .to(CommonConstants.OUTPUT_FILE_PREFIX)
                 .withNumShards(options.getNumShards())

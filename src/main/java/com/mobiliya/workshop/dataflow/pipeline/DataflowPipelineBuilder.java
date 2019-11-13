@@ -55,7 +55,8 @@ public class DataflowPipelineBuilder implements Serializable {
                         AfterFirst.of(
                             AfterPane.elementCountAtLeast(10),
                             AfterProcessingTime.pastFirstElementInPane()
-                                .plusDelayOf(Duration.standardMinutes(2)))))
+                                    .plusDelayOf(Duration.standardMinutes(2))))
+                )
                 .withAllowedLateness(Duration.ZERO)
                 .discardingFiredPanes())
             .apply("Extract the JSON Fields", MapElements.via(new CSVWriter()))

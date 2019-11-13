@@ -23,7 +23,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
         <jacoco.exclusions>**/*Application*.class,**/constants/*,
-            **/entities/**,**/FailureMetaData*.class,
+            **/entities/**,**/util/**,**/common/**,**/FailureMetaData*.class,
             **/exception/*
         </jacoco.exclusions>
         <jacoco.minimumInstructionCoverage>0.900</jacoco.minimumInstructionCoverage>

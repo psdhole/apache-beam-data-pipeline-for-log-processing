@@ -1,16 +1,1 @@
-{
-  "content": {
-    "keys": {
-      "sac_no": 1024785,
-      "sac_unit": "FR023",
-      "country_code": "FR"
-    },
-    "target": [
-      "Metadata",
-      "Event",
-      "InvoiceInformation",
-      "DeliveryInformation",
-      "ReturnInformation"
-    ]
-  }
-}
+{"logType": "INFO","logSeverity": "1","logPriority": "1","logDescription": "NEWMSG1110"}

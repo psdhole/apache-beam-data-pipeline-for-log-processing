@@ -28,7 +28,7 @@ public class DataFlowPipelineBuilderTest {
     arguments.put(Constants.KAFKA_BROKER_URL_KEY, Constants.KAFKA_BROKER_URL);
     arguments.put(Constants.KAKFA_INPUT_TOPIC_KEY, Constants.KAKFA_INPUT_TOPIC);
     arguments.put(Constants.FIXED_WINDOW_LENGTH_KEY, Constants.FIXED_WINDOW_LENGTH);
-
+    arguments.put(Constants.NUM_SHARDS_KEY, Constants.NUM_SHARDS_VALUE);
     // To logs the failure / exception data
 
     arguments.put(Constants.RUNNER_KEY, Constants.RUNNER);
@@ -80,6 +80,7 @@ public class DataFlowPipelineBuilderTest {
     arguments.put(Constants.KAFKA_BROKER_URL_KEY, Constants.KAFKA_BROKER_URL);
     arguments.put(Constants.KAKFA_INPUT_TOPIC_KEY, Constants.KAKFA_INPUT_TOPIC);
     arguments.put(Constants.FIXED_WINDOW_LENGTH_KEY, Constants.FIXED_WINDOW_LENGTH);
+    arguments.put(Constants.NUM_SHARDS_KEY, Constants.NUM_SHARDS_VALUE);
 
     // To logs the failure / exception data
     arguments.put(Constants.RUNNER_KEY, Constants.RUNNER);

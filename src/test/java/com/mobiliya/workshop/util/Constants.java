@@ -15,8 +15,12 @@ public class Constants {
   public static final String KAKFA_INPUT_TOPIC_KEY = "inputKafkaTopicName";
   public static final String KAKFA_INPUT_TOPIC = "input-log-topic";
 
-  public static final String FIXED_WINDOW_LENGTH_KEY = "fixedWindowLength";
+  public static final String FIXED_WINDOW_LENGTH_KEY = "windowSize";
   public static final String FIXED_WINDOW_LENGTH = "2";
+
+  public static final String NUM_SHARDS_KEY = "numShards";
+  public static final String NUM_SHARDS_VALUE = "5";
+
 
   public static final String DATABASE_URL_KEY = "databaseURL";
   public static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/postgres";

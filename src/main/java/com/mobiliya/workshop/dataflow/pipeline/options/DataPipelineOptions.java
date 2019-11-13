@@ -6,26 +6,6 @@ import org.apache.beam.sdk.options.Validation;
 
 public interface DataPipelineOptions extends GcpOptions {
 
-  @Description("Topic to read payload from ingestion queue")
-  String getCimEventsTopic();
-
-  void setCimEventsTopic(String cimEventsTopic);
-
-  @Description("Database URL command line argument.")
-  String getDatabaseURL();
-
-  void setDatabaseURL(String databaseURL);
-
-  @Description("Database USERNAME command line argument.")
-  String getDatabaseUserName();
-
-  void setDatabaseUserName(String databaseUserName);
-
-  @Description("Database PASSWORD command line argument.")
-  String getDatabasePassword();
-
-  void setDatabasePassword(String databasePassword);
-
   @Description("Failure Log Topic")
   String getFailureDataTopic();
 

@@ -21,10 +21,6 @@ public class DataFlowPipelineBuilderTest {
 
     Map<String, String> arguments = new HashMap<>();
     arguments.put(Constants.PROJECT_KEY, Constants.PROJECT_ID);
-    arguments.put(Constants.DATABASE_URL_KEY, Constants.DATABASE_URL);
-    arguments.put(Constants.DATABASE_USER_NAME_KEY, Constants.DATABASE_USER_NAME);
-    arguments.put(Constants.DATABASE_PWD_KEY, Constants.DATABASE_PWD);
-    arguments.put(Constants.INGESTION_TOPIC_KEY, Constants.INGESTION_TOPIC);
     arguments.put(Constants.KAFKA_BROKER_URL_KEY, Constants.KAFKA_BROKER_URL);
     arguments.put(Constants.KAKFA_INPUT_TOPIC_KEY, Constants.KAKFA_INPUT_TOPIC);
     arguments.put(Constants.FIXED_WINDOW_LENGTH_KEY, Constants.FIXED_WINDOW_LENGTH);
@@ -42,11 +38,8 @@ public class DataFlowPipelineBuilderTest {
     Assert.assertNotNull(actualPipeline);
     DataPipelineOptions options = (DataPipelineOptions) actualPipeline.getOptions();
     Assert.assertEquals(arguments.get(Constants.PROJECT_KEY), options.getProject());
-    Assert.assertEquals(arguments.get(Constants.DATABASE_URL_KEY), options.getDatabaseURL());
-    Assert.assertEquals(
-        arguments.get(Constants.DATABASE_USER_NAME_KEY), options.getDatabaseUserName());
-    Assert.assertEquals(arguments.get(Constants.DATABASE_PWD_KEY), options.getDatabasePassword());
-    Assert.assertEquals(arguments.get(Constants.INGESTION_TOPIC_KEY), options.getCimEventsTopic());
+    Assert.assertEquals(arguments.get(Constants.KAKFA_INPUT_TOPIC_KEY), options.getInputKafkaTopicName());
+    Assert.assertEquals(arguments.get(Constants.KAFKA_BROKER_URL_KEY), options.getKafkaBrokerUrl());
     Assert.assertEquals(arguments.get(Constants.RUNNER_KEY), options.getRunner().getSimpleName());
   }
 
@@ -55,10 +48,6 @@ public class DataFlowPipelineBuilderTest {
 
     Map<String, String> arguments = new HashMap<>();
     arguments.put(Constants.PROJECT_KEY, Constants.PROJECT_ID);
-    arguments.put(Constants.DATABASE_URL_KEY, Constants.DATABASE_URL);
-    arguments.put(Constants.DATABASE_USER_NAME_KEY, Constants.DATABASE_USER_NAME);
-    arguments.put(Constants.DATABASE_PWD_KEY, Constants.DATABASE_PWD);
-
     // To logs the failure / exception data
     arguments.put(Constants.RUNNER_KEY, Constants.RUNNER);
 
@@ -73,10 +62,6 @@ public class DataFlowPipelineBuilderTest {
   public void testDataFlowPipelineWithoutProject() {
 
     Map<String, String> arguments = new HashMap<>();
-    arguments.put(Constants.DATABASE_URL_KEY, Constants.DATABASE_URL);
-    arguments.put(Constants.DATABASE_USER_NAME_KEY, Constants.DATABASE_USER_NAME);
-    arguments.put(Constants.DATABASE_PWD_KEY, Constants.DATABASE_PWD);
-    arguments.put(Constants.INGESTION_TOPIC_KEY, Constants.INGESTION_TOPIC);
     arguments.put(Constants.KAFKA_BROKER_URL_KEY, Constants.KAFKA_BROKER_URL);
     arguments.put(Constants.KAKFA_INPUT_TOPIC_KEY, Constants.KAKFA_INPUT_TOPIC);
     arguments.put(Constants.FIXED_WINDOW_LENGTH_KEY, Constants.FIXED_WINDOW_LENGTH);

@@ -12,6 +12,9 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Test class for {@link DataflowPipelineBuilder}
+ */
 public class DataFlowPipelineBuilderTest {
 
   @Rule public final TestPipeline pipeline = TestPipeline.create();
@@ -23,7 +26,7 @@ public class DataFlowPipelineBuilderTest {
     arguments.put(Constants.PROJECT_KEY, Constants.PROJECT_ID);
     arguments.put(Constants.KAFKA_BROKER_URL_KEY, Constants.KAFKA_BROKER_URL);
     arguments.put(Constants.KAKFA_INPUT_TOPIC_KEY, Constants.KAKFA_INPUT_TOPIC);
-    arguments.put(Constants.FIXED_WINDOW_LENGTH_KEY, Constants.FIXED_WINDOW_LENGTH);
+    arguments.put(Constants.FIXED_WINDOW_SIZE_KEY, Constants.FIXED_WINDOW_SIZE);
     arguments.put(Constants.NUM_SHARDS_KEY, Constants.NUM_SHARDS_VALUE);
     // To logs the failure / exception data
 
@@ -31,10 +34,10 @@ public class DataFlowPipelineBuilderTest {
     DataflowPipelineBuilder builder = new DataflowPipelineBuilder();
 
     Pipeline actualPipeline =
-        builder.createDataPipeline(
-            arguments.entrySet().stream()
-                .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
-                .toArray(String[]::new));
+            builder.createDataPipeline(
+                    arguments.entrySet().stream()
+                            .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
+                            .toArray(String[]::new));
     Assert.assertNotNull(actualPipeline);
     DataPipelineOptions options = (DataPipelineOptions) actualPipeline.getOptions();
     Assert.assertEquals(arguments.get(Constants.PROJECT_KEY), options.getProject());
@@ -53,9 +56,9 @@ public class DataFlowPipelineBuilderTest {
 
     DataflowPipelineBuilder sut = new DataflowPipelineBuilder();
     sut.createDataPipeline(
-        arguments.entrySet().stream()
-            .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
-            .toArray(String[]::new));
+            arguments.entrySet().stream()
+                    .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
+                    .toArray(String[]::new));
   }
 
   @Test(expected = DataPipelineException.class)
@@ -64,7 +67,7 @@ public class DataFlowPipelineBuilderTest {
     Map<String, String> arguments = new HashMap<>();
     arguments.put(Constants.KAFKA_BROKER_URL_KEY, Constants.KAFKA_BROKER_URL);
     arguments.put(Constants.KAKFA_INPUT_TOPIC_KEY, Constants.KAKFA_INPUT_TOPIC);
-    arguments.put(Constants.FIXED_WINDOW_LENGTH_KEY, Constants.FIXED_WINDOW_LENGTH);
+    arguments.put(Constants.FIXED_WINDOW_SIZE_KEY, Constants.FIXED_WINDOW_SIZE);
     arguments.put(Constants.NUM_SHARDS_KEY, Constants.NUM_SHARDS_VALUE);
 
     // To logs the failure / exception data
@@ -72,8 +75,8 @@ public class DataFlowPipelineBuilderTest {
 
     DataflowPipelineBuilder sut = new DataflowPipelineBuilder();
     sut.createDataPipeline(
-        arguments.entrySet().stream()
-            .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
-            .toArray(String[]::new));
+            arguments.entrySet().stream()
+                    .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
+                    .toArray(String[]::new));
   }
 }

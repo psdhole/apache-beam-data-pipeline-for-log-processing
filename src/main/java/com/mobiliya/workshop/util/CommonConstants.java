@@ -3,6 +3,9 @@ package com.mobiliya.workshop.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/**
+ * Common used in the pipeline application.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommonConstants {
   public static final String SHARDING_TEMPLATE_VALUE = "-logfile-SS-of-NN";

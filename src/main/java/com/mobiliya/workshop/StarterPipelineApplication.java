@@ -3,9 +3,8 @@ package com.mobiliya.workshop;
 import com.mobiliya.workshop.dataflow.pipeline.DataflowPipelineBuilder;
 
 /**
- * Provide description here
- *
- * @version 0.1
+ * The Main class to run the data pipeline.
+ **
  */
 public class StarterPipelineApplication {
 

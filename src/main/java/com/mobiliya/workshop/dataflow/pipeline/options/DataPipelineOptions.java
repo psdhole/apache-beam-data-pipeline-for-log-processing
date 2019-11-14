@@ -4,6 +4,9 @@ import org.apache.beam.sdk.extensions.gcp.options.GcpOptions;
 import org.apache.beam.sdk.options.Description;
 import org.apache.beam.sdk.options.Validation;
 
+/**
+ * Class to hold the data pipeline options values.
+ */
 public interface DataPipelineOptions extends GcpOptions {
 
   @Description("Failure Log Topic")

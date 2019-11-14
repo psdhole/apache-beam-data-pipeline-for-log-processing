@@ -13,7 +13,9 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.Properties;
 
-/** The Class {@link LogMessageProducer}. */
+/**
+ * The Class {@link LogMessageProducer} to produces the messages on kakfa topic
+ */
 @Slf4j
 public class LogMessageProducer {
 

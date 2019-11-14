@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.beam.sdk.transforms.SimpleFunction;
 import org.apache.beam.sdk.values.KV;
 
+/**
+ * Class CSVWriter to convert a JSON row into the CSV file row.
+ */
 @Slf4j
 public class CSVWriter extends SimpleFunction<KV<String, String>, String> {
   private static final long serialVersionUID = 1L;

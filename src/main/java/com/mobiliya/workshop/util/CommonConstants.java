@@ -13,9 +13,6 @@ public class CommonConstants {
   public static final String OUTPUT_FILE_SUFFIX = ".csv";
   public static final String AUTO_OFFSET_RESET_KEY = "auto.offset.reset";
   public static final String AUTO_OFFSET_RESET_VALUE = "earliest";
-  public static final String KEY_LOG_TYPE = "logType";
-  public static final String KEY_LOG_SEVERITY = "logSeverity";
-  public static final String KEY_LOG_PRIORITY = "logPriority";
-  public static final String KEY_LOG_DESC = "logDescription";
   public static final String CSV_HEADERS = "LogType,LogSeverity,LogPriority,LogDescription";
+  public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSSXXX";
 }

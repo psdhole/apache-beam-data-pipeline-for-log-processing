@@ -3,6 +3,9 @@ package com.mobiliya.workshop.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/**
+ * Common constants used in test suite.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Constants {
   public static final String KAFKA_BROKER_URL_KEY = "kafkaBrokerUrl";

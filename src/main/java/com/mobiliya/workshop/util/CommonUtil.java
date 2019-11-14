@@ -22,7 +22,7 @@ public class CommonUtil {
     }
 
     public static String getTimeStamp() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSXXX");
+        SimpleDateFormat sdf = new SimpleDateFormat(CommonConstants.DATE_FORMAT);
         Date date = new Date();
         return sdf.format(date.getTime());
     }

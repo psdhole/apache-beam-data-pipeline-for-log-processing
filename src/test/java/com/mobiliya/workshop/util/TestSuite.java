@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * The {@link TestSuite} class used common for all the test classes.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TestSuite {
 

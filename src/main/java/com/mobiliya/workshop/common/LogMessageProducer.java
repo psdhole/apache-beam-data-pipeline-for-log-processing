@@ -64,8 +64,8 @@ public class LogMessageProducer {
       sendLog(
           LogMessage.builder()
               .logType(LogType.FATAL.toString())
-              .logSeverity("6")
-              .logPriority("6")
+                  .logSeverity("5")
+                  .logPriority("5")
               .logDescription("NEWMSG666" + i)
               .build());
     }

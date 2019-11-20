@@ -28,9 +28,8 @@ public class DataFlowPipelineBuilderTest {
     arguments.put(Constants.KAKFA_INPUT_TOPIC_KEY, Constants.KAKFA_INPUT_TOPIC);
     arguments.put(Constants.FIXED_WINDOW_SIZE_KEY, Constants.FIXED_WINDOW_SIZE);
     arguments.put(Constants.NUM_SHARDS_KEY, Constants.NUM_SHARDS_VALUE);
-    // To logs the failure / exception data
-
     arguments.put(Constants.RUNNER_KEY, Constants.RUNNER);
+
     DataflowPipelineBuilder builder = new DataflowPipelineBuilder();
 
     Pipeline actualPipeline =
@@ -38,12 +37,14 @@ public class DataFlowPipelineBuilderTest {
                     arguments.entrySet().stream()
                             .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
                             .toArray(String[]::new));
+
     Assert.assertNotNull(actualPipeline);
     DataPipelineOptions options = (DataPipelineOptions) actualPipeline.getOptions();
     Assert.assertEquals(arguments.get(Constants.PROJECT_KEY), options.getProject());
     Assert.assertEquals(arguments.get(Constants.KAKFA_INPUT_TOPIC_KEY), options.getInputKafkaTopicName());
     Assert.assertEquals(arguments.get(Constants.KAFKA_BROKER_URL_KEY), options.getKafkaBrokerUrl());
     Assert.assertEquals(arguments.get(Constants.RUNNER_KEY), options.getRunner().getSimpleName());
+
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -51,14 +52,15 @@ public class DataFlowPipelineBuilderTest {
 
     Map<String, String> arguments = new HashMap<>();
     arguments.put(Constants.PROJECT_KEY, Constants.PROJECT_ID);
-    // To logs the failure / exception data
     arguments.put(Constants.RUNNER_KEY, Constants.RUNNER);
 
     DataflowPipelineBuilder sut = new DataflowPipelineBuilder();
+
     sut.createDataPipeline(
             arguments.entrySet().stream()
                     .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
                     .toArray(String[]::new));
+
   }
 
   @Test(expected = DataPipelineException.class)
@@ -69,14 +71,14 @@ public class DataFlowPipelineBuilderTest {
     arguments.put(Constants.KAKFA_INPUT_TOPIC_KEY, Constants.KAKFA_INPUT_TOPIC);
     arguments.put(Constants.FIXED_WINDOW_SIZE_KEY, Constants.FIXED_WINDOW_SIZE);
     arguments.put(Constants.NUM_SHARDS_KEY, Constants.NUM_SHARDS_VALUE);
-
-    // To logs the failure / exception data
     arguments.put(Constants.RUNNER_KEY, Constants.RUNNER);
 
     DataflowPipelineBuilder sut = new DataflowPipelineBuilder();
+
     sut.createDataPipeline(
             arguments.entrySet().stream()
                     .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
                     .toArray(String[]::new));
+
   }
 }

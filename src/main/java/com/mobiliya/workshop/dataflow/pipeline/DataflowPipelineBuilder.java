@@ -12,8 +12,12 @@ import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.io.kafka.KafkaIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.MapElements;
+import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.transforms.windowing.*;
 import org.apache.beam.sdk.values.KV;
+import org.apache.beam.sdk.values.PCollection;
+import org.apache.beam.sdk.values.PCollectionTuple;
+import org.apache.beam.sdk.values.TupleTagList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.joda.time.Duration;
@@ -31,6 +35,7 @@ public class DataflowPipelineBuilder implements Serializable {
   public Pipeline createDataPipeline(String[] args) {
     log.debug("create data pipeline function is started");
 
+    //Read pipeline options given from the command line.
     final DataPipelineOptions options =
             PipelineOptionsFactory.fromArgs(args).withValidation().as(DataPipelineOptions.class);
 
@@ -40,21 +45,32 @@ public class DataflowPipelineBuilder implements Serializable {
       throw new DataPipelineException("Project is missing from pipeline options.");
     }
 
+    //Create data pipeline with valid options.
     final Pipeline pipeline = Pipeline.create(options);
 
-    pipeline
+    //Get all the records from Kafka and identify valid and invalid data
+    PCollectionTuple inputLogRecords = pipeline
             .apply(
                     KafkaIO.<String, String>read()
                             .withBootstrapServers(options.getKafkaBrokerUrl())
                             .withTopic(options.getInputKafkaTopicName())
                             .withKeyDeserializer(StringDeserializer.class)
                             .withValueDeserializer(StringDeserializer.class)
-                            .updateConsumerProperties(
+                            .withConsumerConfigUpdates(
                                     ImmutableMap.of(
                                             CommonConstants.AUTO_OFFSET_RESET_KEY,
                                             CommonConstants.AUTO_OFFSET_RESET_VALUE))
                             .withoutMetadata())
-            .apply("Create Key Pair", MapElements.via(new JSONParser()))
+            .apply("Parse input and create Key Pair", ParDo.of(new JSONParser()).withOutputTags(CommonConstants.SUCCESS_TAG, TupleTagList.of(CommonConstants.FAILURE_TAG)));
+
+    //Get valid records to process.
+    final PCollection<KV<String, String>> successRecords = inputLogRecords.get(CommonConstants.SUCCESS_TAG);
+
+    //Get invalid valid records to process.
+    final PCollection<KV<String, String>> failedRecords = inputLogRecords.get(CommonConstants.FAILURE_TAG);
+
+    //Process valid  records
+    PCollection<KV<String, String>> recordsToEmitsToFile = successRecords
             .apply(
                     "Applying Fixed window to read stream from Kafka",
                     Window.<KV<String, String>>into(
@@ -67,9 +83,12 @@ public class DataflowPipelineBuilder implements Serializable {
                                                             .plusDelayOf(Duration.standardMinutes(2))))
                             )
                             .withAllowedLateness(Duration.ZERO)
-                            .discardingFiredPanes())
-            .apply("Extract the JSON Fields", MapElements.via(new CSVWriter()))
-            .apply(
+                            .discardingFiredPanes());
+    //Convert each JSON string to the CSV record.
+    PCollection<String> csvRecords = recordsToEmitsToFile.apply("Extract the JSON Fields", MapElements.via(new CSVWriter()));
+
+    //Write the processed records to the CSV file
+    csvRecords.apply(
                     TextIO.write()
                             .withWindowedWrites()
                             .withHeader(CommonConstants.CSV_HEADERS)
@@ -77,7 +96,19 @@ public class DataflowPipelineBuilder implements Serializable {
                             .to(CommonConstants.OUTPUT_FILE_PREFIX)
                             .withNumShards(options.getNumShards())
                             .withSuffix(CommonConstants.OUTPUT_FILE_SUFFIX));
+
+    //Process invalid records
+    failedRecords.apply(
+            "Write failed records to Kafka",
+            KafkaIO.<String, String>write()
+                    .withBootstrapServers(options.getKafkaBrokerUrl())
+                    .withTopic(options.getFailureDataTopic())
+                    .withKeySerializer(org.apache.kafka.common.serialization.StringSerializer.class)
+                    .withValueSerializer(org.apache.kafka.common.serialization.StringSerializer.class));
+    pipeline.run();
+
     log.debug("Pipeline created successfully..!!");
+
     return pipeline;
   }
 }

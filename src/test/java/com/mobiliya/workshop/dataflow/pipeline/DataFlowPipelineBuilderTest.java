@@ -44,7 +44,6 @@ public class DataFlowPipelineBuilderTest {
     Assert.assertEquals(arguments.get(Constants.KAKFA_INPUT_TOPIC_KEY), options.getInputKafkaTopicName());
     Assert.assertEquals(arguments.get(Constants.KAFKA_BROKER_URL_KEY), options.getKafkaBrokerUrl());
     Assert.assertEquals(arguments.get(Constants.RUNNER_KEY), options.getRunner().getSimpleName());
-
   }
 
   @Test(expected = IllegalArgumentException.class)

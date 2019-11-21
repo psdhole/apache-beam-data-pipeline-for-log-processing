@@ -3,12 +3,14 @@ package com.mobiliya.workshop.common;
 import com.mobiliya.workshop.dataflow.pipeline.entities.LogMessage;
 import com.mobiliya.workshop.dataflow.pipeline.entities.LogType;
 import com.mobiliya.workshop.util.CommonConstants;
-import com.mobiliya.workshop.util.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -65,7 +67,7 @@ public class LogMessageProducer {
         logMessage = CommonConstants.objectMapper.writeValueAsString(message);
       } else {
         message.setLogType(LogType.ERROR.toString());
-        logMessage = CommonUtil.getEventPayloadJson(CommonConstants.EVENT_PAYLOAD_MALFORMED_JSON);
+        logMessage = getEventPayloadJson(CommonConstants.EVENT_PAYLOAD_MALFORMED_JSON);
       }
       producer.send(new ProducerRecord<>(INPUT_TOPIC_NAME, message.getLogType(), logMessage)).get();
     } catch (Exception e) {
@@ -82,5 +84,10 @@ public class LogMessageProducer {
     props.put(KEY_SERIALIZER, STRING_SERIALIZER);
     props.put(VALUE_SERIALIZER, STRING_SERIALIZER);
     return new KafkaProducer<>(props);
+  }
+
+
+  public static String getEventPayloadJson(String path) throws IOException {
+    return new String(Files.readAllBytes(Paths.get(path)));
   }
 }

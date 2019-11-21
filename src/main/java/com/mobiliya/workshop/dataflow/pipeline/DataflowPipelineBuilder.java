@@ -5,6 +5,8 @@ import com.mobiliya.workshop.dataflow.pipeline.options.DataPipelineOptions;
 import com.mobiliya.workshop.dataflow.pipeline.steps.CSVWriter;
 import com.mobiliya.workshop.dataflow.pipeline.steps.JSONParser;
 import com.mobiliya.workshop.exception.DataPipelineException;
+import com.mobiliya.workshop.exception.FailureMetaData;
+import com.mobiliya.workshop.exception.LogPipelineFailures;
 import com.mobiliya.workshop.util.CommonConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.beam.sdk.Pipeline;
@@ -61,13 +63,10 @@ public class DataflowPipelineBuilder implements Serializable {
                                             CommonConstants.AUTO_OFFSET_RESET_KEY,
                                             CommonConstants.AUTO_OFFSET_RESET_VALUE))
                             .withoutMetadata())
-            .apply("Parse input and create Key Pair", ParDo.of(new JSONParser()).withOutputTags(CommonConstants.SUCCESS_TAG, TupleTagList.of(CommonConstants.FAILURE_TAG)));
+            .apply("Parse input and create Key Pair", ParDo.of(new JSONParser()).withOutputTags(CommonConstants.SUCCESS_TAG, TupleTagList.of(LogPipelineFailures.FAILURE_TAG)));
 
     //Get valid records to process.
     final PCollection<KV<String, String>> successRecords = inputLogRecords.get(CommonConstants.SUCCESS_TAG);
-
-    //Get invalid valid records to process.
-    final PCollection<KV<String, String>> failedRecords = inputLogRecords.get(CommonConstants.FAILURE_TAG);
 
     //Process valid  records
     PCollection<KV<String, String>> recordsToEmitsToFile = successRecords
@@ -84,6 +83,7 @@ public class DataflowPipelineBuilder implements Serializable {
                             )
                             .withAllowedLateness(Duration.ZERO)
                             .discardingFiredPanes());
+
     //Convert each JSON string to the CSV record.
     PCollection<String> csvRecords = recordsToEmitsToFile.apply("Extract the JSON Fields", MapElements.via(new CSVWriter()));
 
@@ -97,15 +97,11 @@ public class DataflowPipelineBuilder implements Serializable {
                             .withNumShards(options.getNumShards())
                             .withSuffix(CommonConstants.OUTPUT_FILE_SUFFIX));
 
+    //Get invalid valid records to process.
+    final PCollection<KV<String, FailureMetaData>> failedRecords = inputLogRecords.get(LogPipelineFailures.FAILURE_TAG);
+
     //Process invalid records
-    failedRecords.apply(
-            "Write failed records to Kafka",
-            KafkaIO.<String, String>write()
-                    .withBootstrapServers(options.getKafkaBrokerUrl())
-                    .withTopic(options.getFailureDataTopic())
-                    .withKeySerializer(org.apache.kafka.common.serialization.StringSerializer.class)
-                    .withValueSerializer(org.apache.kafka.common.serialization.StringSerializer.class));
-    pipeline.run();
+    LogPipelineFailures.logFailuresToQueue(options.getKafkaBrokerUrl(), options.getFailureDataTopic(), failedRecords);
 
     log.debug("Pipeline created successfully..!!");
 

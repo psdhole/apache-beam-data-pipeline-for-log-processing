@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Slf4j
 public class LogPipelineFailures implements Serializable {
 
-    private static final String FAILURE_TEXT = "LogFailures";
+  private static final String FAILURE_TEXT = "LogFailures";
 
   // Log the pipeline failures on queue
   public static void logFailuresToQueue(
@@ -21,10 +21,7 @@ public class LogPipelineFailures implements Serializable {
       String outputTopic,
       final PCollection<KV<String, FailureMetaData>> failedRecords) {
     failedRecords
-        .apply(
-            "Convert the failure metadata to JSON",
-                MapElements.via(
-                        new JSONConverter()))
+        .apply("Convert the failure metadata to JSON", MapElements.via(new JSONConverter()))
         .apply(
             FAILURE_TEXT.concat("Write failed records to Kafka"),
             KafkaIO.<String, String>write()

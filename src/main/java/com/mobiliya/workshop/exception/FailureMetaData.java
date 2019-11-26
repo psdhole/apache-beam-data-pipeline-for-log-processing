@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /** Describes failures in pipeline transforms */
-
 @Data
 @Builder
 @NoArgsConstructor

@@ -10,9 +10,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-/**
- * Test class for {@link CSVWriter}
- */
+/** Test class for {@link CSVWriter} */
 public class CSVWriterTest {
 
   @Rule public final TestPipeline pipeline = TestPipeline.create();
@@ -23,14 +21,14 @@ public class CSVWriterTest {
     String jsonString = TestSuite.getEventPayloadJson(TestSuite.EVENT_PAYLOAD_JSON);
     LogMessage logMessage = TestSuite.objectMapper.readValue(jsonString, LogMessage.class);
     String result = csvWriter.apply(KV.of("", jsonString));
-    StringBuilder sb = new StringBuilder("");
+    StringBuilder sb = new StringBuilder();
     sb.append(logMessage.getLogType())
-            .append(",")
-            .append(logMessage.getLogSeverity())
-            .append(",")
-            .append(logMessage.getLogPriority())
-            .append(",")
-            .append(logMessage.getLogDescription());
+        .append(",")
+        .append(logMessage.getLogSeverity())
+        .append(",")
+        .append(logMessage.getLogPriority())
+        .append(",")
+        .append(logMessage.getLogDescription());
     Assert.assertEquals(sb.toString(), result);
   }
 

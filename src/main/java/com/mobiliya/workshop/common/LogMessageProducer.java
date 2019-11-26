@@ -14,9 +14,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Properties;
 
-/**
- * The Class {@link LogMessageProducer} to produces the messages on kakfa topic
- */
+/** The Class {@link LogMessageProducer} to produces the messages on kakfa topic */
 @Slf4j
 public class LogMessageProducer {
 
@@ -27,7 +25,8 @@ public class LogMessageProducer {
   public static final String BROKER_URL_KEY = "bootstrap.servers";
   public static final String BROKER_URL_VALUE = "broker:9092";
   public static final String VALUE_SERIALIZER = "value.serializer";
-  public static final String STRING_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
+  public static final String STRING_SERIALIZER =
+      "org.apache.kafka.common.serialization.StringSerializer";
   public static final String INPUT_TOPIC_NAME = "input-log-topic";
 
   /**
@@ -40,16 +39,16 @@ public class LogMessageProducer {
       int logPriority = 1;
       for (LogType logType : LogType.values()) {
         logPriority++;
-        //send success records
+        // send success records
         sendLogMessage(
-                LogMessage.builder()
-                        .logType(logType.toString())
-                        .logSeverity(String.valueOf(logPriority))
-                        .logPriority(String.valueOf(logPriority))
-                        .logDescription("This is error no " + i + "" + logPriority)
-                        .build());
+            LogMessage.builder()
+                .logType(logType.toString())
+                .logSeverity(String.valueOf(logPriority))
+                .logPriority(String.valueOf(logPriority))
+                .logDescription("This is error no " + i + "" + logPriority)
+                .build());
       }
-      //send failed record
+      // send failed record
       sendLogMessage(new LogMessage());
     }
   }
@@ -75,7 +74,6 @@ public class LogMessageProducer {
     }
   }
 
-
   private static KafkaProducer getKafkaProducer() {
     Properties props = new Properties();
     props.put(BROKER_URL_KEY, BROKER_URL_VALUE);
@@ -85,7 +83,6 @@ public class LogMessageProducer {
     props.put(VALUE_SERIALIZER, STRING_SERIALIZER);
     return new KafkaProducer<>(props);
   }
-
 
   public static String getEventPayloadJson(String path) throws IOException {
     return new String(Files.readAllBytes(Paths.get(path)));

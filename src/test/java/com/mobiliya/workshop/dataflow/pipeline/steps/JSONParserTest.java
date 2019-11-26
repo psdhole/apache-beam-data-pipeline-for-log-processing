@@ -19,9 +19,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-/**
- * Test class for {@link JSONParser}
- */
+/** Test class for {@link JSONParser} */
 @Slf4j
 public class JSONParserTest {
   @Rule public final TestPipeline pipeline = TestPipeline.create();
@@ -31,15 +29,17 @@ public class JSONParserTest {
     String jsonString = TestSuite.getEventPayloadJson(TestSuite.EVENT_PAYLOAD_JSON);
     LogMessage logMessage = TestSuite.objectMapper.readValue(jsonString, LogMessage.class);
     PCollectionTuple result =
-            pipeline
-                    .apply("Create", Create.of(KV.of(logMessage.getLogType(), jsonString)))
-                    .apply(
-                            "Conversion",
-                            ParDo.of(new JSONParser())
-                                    .withOutputTags(CommonConstants.SUCCESS_TAG, TupleTagList.of(CommonConstants.FAILURE_TAG)));
+        pipeline
+            .apply("Create", Create.of(KV.of(logMessage.getLogType(), jsonString)))
+            .apply(
+                "Conversion",
+                ParDo.of(new JSONParser())
+                    .withOutputTags(
+                        CommonConstants.SUCCESS_TAG, TupleTagList.of(CommonConstants.FAILURE_TAG)));
     Assert.assertNotNull(result);
 
-    final PCollection<KV<String, FailureMetaData>> failedRecords = result.get(CommonConstants.FAILURE_TAG);
+    final PCollection<KV<String, FailureMetaData>> failedRecords =
+        result.get(CommonConstants.FAILURE_TAG);
     final PCollection<KV<String, String>> successRecords = result.get(CommonConstants.SUCCESS_TAG);
 
     PAssert.that(failedRecords).empty();
@@ -53,17 +53,20 @@ public class JSONParserTest {
   public void testJSONParserFailure() throws IOException {
     String jsonString = TestSuite.getEventPayloadJson(TestSuite.EVENT_PAYLOAD_MALFORMED_JSON);
     String metaJsonString = TestSuite.getEventPayloadJson(TestSuite.EVENT_PAYLOAD_ERROR_META_JSON);
-    FailureMetaData failureMetaData = CommonConstants.objectMapper.readValue(metaJsonString, FailureMetaData.class);
+    FailureMetaData failureMetaData =
+        CommonConstants.objectMapper.readValue(metaJsonString, FailureMetaData.class);
     PCollectionTuple result =
-            pipeline
-                    .apply("Create", Create.of(KV.of("ERROR", jsonString)))
-                    .apply(
-                            "Conversion",
-                            ParDo.of(new JSONParser())
-                                    .withOutputTags(CommonConstants.SUCCESS_TAG, TupleTagList.of(CommonConstants.FAILURE_TAG)));
+        pipeline
+            .apply("Create", Create.of(KV.of("ERROR", jsonString)))
+            .apply(
+                "Conversion",
+                ParDo.of(new JSONParser())
+                    .withOutputTags(
+                        CommonConstants.SUCCESS_TAG, TupleTagList.of(CommonConstants.FAILURE_TAG)));
     Assert.assertNotNull(result);
 
-    final PCollection<KV<String, FailureMetaData>> failedRecords = result.get(CommonConstants.FAILURE_TAG);
+    final PCollection<KV<String, FailureMetaData>> failedRecords =
+        result.get(CommonConstants.FAILURE_TAG);
     final PCollection<KV<String, String>> successRecords = result.get(CommonConstants.SUCCESS_TAG);
 
     Assert.assertFalse(failedRecords.expand().isEmpty());

@@ -37,9 +37,9 @@ public class DataflowPipelineBuilder implements Serializable {
   public Pipeline createDataPipeline(String[] args) {
     log.debug("create data pipeline function is started");
 
-    //Read pipeline options given from the command line.
+    // Read pipeline options given from the command line.
     final DataPipelineOptions options =
-            PipelineOptionsFactory.fromArgs(args).withValidation().as(DataPipelineOptions.class);
+        PipelineOptionsFactory.fromArgs(args).withValidation().as(DataPipelineOptions.class);
 
     final String projectName = options.getProject();
 
@@ -47,61 +47,69 @@ public class DataflowPipelineBuilder implements Serializable {
       throw new DataPipelineException("Project is missing from pipeline options.");
     }
 
-    //Create data pipeline with valid options.
+    // Create data pipeline with valid options.
     final Pipeline pipeline = Pipeline.create(options);
 
-    //Get all the records from Kafka and identify valid and invalid data
-    PCollectionTuple inputLogRecords = pipeline
+    // Get all the records from Kafka and identify valid and invalid data
+    PCollectionTuple inputLogRecords =
+        pipeline
             .apply(
-                    KafkaIO.<String, String>read()
-                            .withBootstrapServers(options.getKafkaBrokerUrl())
-                            .withTopic(options.getInputKafkaTopicName())
-                            .withKeyDeserializer(StringDeserializer.class)
-                            .withValueDeserializer(StringDeserializer.class)
-                            .withConsumerConfigUpdates(
-                                    ImmutableMap.of(
-                                            CommonConstants.AUTO_OFFSET_RESET_KEY,
-                                            CommonConstants.AUTO_OFFSET_RESET_VALUE))
-                            .withoutMetadata())
-            .apply("Parse input and create Key Pair", ParDo.of(new JSONParser()).withOutputTags(CommonConstants.SUCCESS_TAG, TupleTagList.of(CommonConstants.FAILURE_TAG)));
-
-    //Get valid records to process.
-    final PCollection<KV<String, String>> successRecords = inputLogRecords.get(CommonConstants.SUCCESS_TAG);
-
-    //Process valid  records
-    PCollection<KV<String, String>> recordsToEmitsToFile = successRecords
+                KafkaIO.<String, String>read()
+                    .withBootstrapServers(options.getKafkaBrokerUrl())
+                    .withTopic(options.getInputKafkaTopicName())
+                    .withKeyDeserializer(StringDeserializer.class)
+                    .withValueDeserializer(StringDeserializer.class)
+                    .withConsumerConfigUpdates(
+                        ImmutableMap.of(
+                            CommonConstants.AUTO_OFFSET_RESET_KEY,
+                            CommonConstants.AUTO_OFFSET_RESET_VALUE))
+                    .withoutMetadata())
             .apply(
-                    "Applying Fixed window to read stream from Kafka",
-                    Window.<KV<String, String>>into(
-                            FixedWindows.of(Duration.standardMinutes(options.getWindowSize())))
-                            .triggering(
-                                    Repeatedly.forever(
-                                            AfterFirst.of(
-                                                    AfterPane.elementCountAtLeast(10),
-                                                    AfterProcessingTime.pastFirstElementInPane()
-                                                            .plusDelayOf(Duration.standardMinutes(2))))
-                            )
-                            .withAllowedLateness(Duration.ZERO)
-                            .discardingFiredPanes());
+                "Parse input and create Key Pair",
+                ParDo.of(new JSONParser())
+                    .withOutputTags(
+                        CommonConstants.SUCCESS_TAG, TupleTagList.of(CommonConstants.FAILURE_TAG)));
 
-    //Convert each JSON string to the CSV record.
-    PCollection<String> csvRecords = recordsToEmitsToFile.apply("Extract the JSON Fields", MapElements.via(new CSVWriter()));
+    // Get valid records to process.
+    final PCollection<KV<String, String>> successRecords =
+        inputLogRecords.get(CommonConstants.SUCCESS_TAG);
 
-    //Write the processed records to the CSV file
+    // Process valid  records
+    PCollection<KV<String, String>> recordsToEmitsToFile =
+        successRecords.apply(
+            "Applying Fixed window to read stream from Kafka",
+            Window.<KV<String, String>>into(
+                    FixedWindows.of(Duration.standardMinutes(options.getWindowSize())))
+                .triggering(
+                    Repeatedly.forever(
+                        AfterFirst.of(
+                            AfterPane.elementCountAtLeast(10),
+                            AfterProcessingTime.pastFirstElementInPane()
+                                .plusDelayOf(Duration.standardMinutes(2)))))
+                .withAllowedLateness(Duration.ZERO)
+                .discardingFiredPanes());
+
+    // Convert each JSON string to the CSV record.
+    PCollection<String> csvRecords =
+        recordsToEmitsToFile.apply("Extract the JSON Fields", MapElements.via(new CSVWriter()));
+
+    // Write the processed records to the CSV file
     csvRecords.apply(
-                    TextIO.write()
-                            .withWindowedWrites()
-                            .withHeader(CommonConstants.CSV_HEADERS)
-                            .withShardNameTemplate(CommonConstants.SHARDING_TEMPLATE_VALUE)
-                            .to(CommonConstants.OUTPUT_FILE_PREFIX)
-                            .withNumShards(options.getNumShards())
-                            .withSuffix(CommonConstants.OUTPUT_FILE_SUFFIX));
+        TextIO.write()
+            .withWindowedWrites()
+            .withHeader(CommonConstants.CSV_HEADERS)
+            .withShardNameTemplate(CommonConstants.SHARDING_TEMPLATE_VALUE)
+            .to(CommonConstants.OUTPUT_FILE_PREFIX)
+            .withNumShards(options.getNumShards())
+            .withSuffix(CommonConstants.OUTPUT_FILE_SUFFIX));
 
-    //Get invalid valid records to process.
-    final PCollection<KV<String, FailureMetaData>> failedRecords = inputLogRecords.get(CommonConstants.FAILURE_TAG);
+    // Get invalid valid records to process.
+    final PCollection<KV<String, FailureMetaData>> failedRecords =
+        inputLogRecords.get(CommonConstants.FAILURE_TAG);
 
-    //Process invalid records
-    LogPipelineFailures.logFailuresToQueue(options.getKafkaBrokerUrl(), options.getFailureDataTopic(), failedRecords);
+    // Process invalid records
+    LogPipelineFailures.logFailuresToQueue(
+        options.getKafkaBrokerUrl(), options.getFailureDataTopic(), failedRecords);
 
     log.debug("Pipeline created successfully..!!");
 

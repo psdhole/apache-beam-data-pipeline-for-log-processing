@@ -7,7 +7,6 @@ import org.apache.beam.sdk.values.KV;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import org.omg.CORBA.Object;
 
 import java.io.IOException;
 

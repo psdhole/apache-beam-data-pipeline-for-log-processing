@@ -5,9 +5,7 @@ import org.apache.beam.sdk.options.Default;
 import org.apache.beam.sdk.options.Description;
 import org.apache.beam.sdk.options.Validation;
 
-/**
- * Class to hold the data pipeline options values.
- */
+/** Class to hold the data pipeline options values. */
 public interface DataPipelineOptions extends GcpOptions {
 
   @Description("Topic name to handle failed log messages")

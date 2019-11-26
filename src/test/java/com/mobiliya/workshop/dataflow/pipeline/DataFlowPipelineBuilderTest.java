@@ -12,9 +12,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Test class for {@link DataflowPipelineBuilder}
- */
+/** Test class for {@link DataflowPipelineBuilder} */
 public class DataFlowPipelineBuilderTest {
 
   @Rule public final TestPipeline pipeline = TestPipeline.create();
@@ -33,15 +31,16 @@ public class DataFlowPipelineBuilderTest {
     DataflowPipelineBuilder builder = new DataflowPipelineBuilder();
 
     Pipeline actualPipeline =
-            builder.createDataPipeline(
-                    arguments.entrySet().stream()
-                            .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
-                            .toArray(String[]::new));
+        builder.createDataPipeline(
+            arguments.entrySet().stream()
+                .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
+                .toArray(String[]::new));
 
     Assert.assertNotNull(actualPipeline);
     DataPipelineOptions options = (DataPipelineOptions) actualPipeline.getOptions();
     Assert.assertEquals(arguments.get(Constants.PROJECT_KEY), options.getProject());
-    Assert.assertEquals(arguments.get(Constants.KAKFA_INPUT_TOPIC_KEY), options.getInputKafkaTopicName());
+    Assert.assertEquals(
+        arguments.get(Constants.KAKFA_INPUT_TOPIC_KEY), options.getInputKafkaTopicName());
     Assert.assertEquals(arguments.get(Constants.KAFKA_BROKER_URL_KEY), options.getKafkaBrokerUrl());
     Assert.assertEquals(arguments.get(Constants.RUNNER_KEY), options.getRunner().getSimpleName());
   }
@@ -56,10 +55,9 @@ public class DataFlowPipelineBuilderTest {
     DataflowPipelineBuilder sut = new DataflowPipelineBuilder();
 
     sut.createDataPipeline(
-            arguments.entrySet().stream()
-                    .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
-                    .toArray(String[]::new));
-
+        arguments.entrySet().stream()
+            .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
+            .toArray(String[]::new));
   }
 
   @Test(expected = DataPipelineException.class)
@@ -75,9 +73,8 @@ public class DataFlowPipelineBuilderTest {
     DataflowPipelineBuilder sut = new DataflowPipelineBuilder();
 
     sut.createDataPipeline(
-            arguments.entrySet().stream()
-                    .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
-                    .toArray(String[]::new));
-
+        arguments.entrySet().stream()
+            .map(e -> String.format(Constants.PATTERN, e.getKey(), e.getValue()))
+            .toArray(String[]::new));
   }
 }

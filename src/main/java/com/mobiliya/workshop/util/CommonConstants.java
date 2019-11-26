@@ -1,6 +1,7 @@
 package com.mobiliya.workshop.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mobiliya.workshop.exception.FailureMetaData;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.beam.sdk.values.KV;
@@ -20,8 +21,9 @@ public class CommonConstants {
   public static final ObjectMapper objectMapper = new ObjectMapper();
   public static final String EVENT_PAYLOAD_MALFORMED_JSON = "src/test/resources/cim-event_payload_error.json";
   public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSSXXX";
-  public static final TupleTag<KV<String, String>> FAILURE_TAG = new TupleTag<KV<String, String>>() {
-  };
   public static final TupleTag<KV<String, String>> SUCCESS_TAG = new TupleTag<KV<String, String>>() {
   };
+  public static final TupleTag<KV<String, FailureMetaData>> FAILURE_TAG =
+          new TupleTag<KV<String, FailureMetaData>>() {
+          };
 }

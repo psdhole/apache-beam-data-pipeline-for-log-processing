@@ -1,0 +1,7 @@
+{
+  "failedClass": "class com.mobiliya.workshop.dataflow.pipeline.steps.JSONParser",
+  "description": "Unexpected character ('\"' (code 34)): was expecting comma to separate Object entries\n at [Source: (String)\"{\r\n  \"logType\": \"INFO\",\r\n  \"logSeverity\": \"1\",\r\n  \"logPriority\": \"1\"\r\n  \"logDescription\": \"NEWMSG1110\"\r\n}\"; line: 5, column: 4]",
+  "precursorDataString": "{\r\n  \"logType\": \"INFO\",\r\n  \"logSeverity\": \"1\",\r\n  \"logPriority\": \"1\"\r\n  \"logDescription\": \"NEWMSG1110\"\r\n}",
+  "stackTrace": null,
+  "timestamp": "2019-11-26T12:15:59.0480+05:30"
+}

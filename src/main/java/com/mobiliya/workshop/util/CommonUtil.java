@@ -3,7 +3,6 @@ package com.mobiliya.workshop.util;
 import com.mobiliya.workshop.exception.FailureMetaData;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.apache.beam.vendor.guava.v20_0.com.google.common.base.Throwables;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,17 +25,6 @@ public class CommonUtil {
                 .failedClass(failedClassName)
                 .description(errorDescription)
                 .precursorDataString(data)
-                .timestamp(getTimeStamp())
-                .build();
-    }
-
-    public static FailureMetaData getExceptionFailureResponse(
-            String className, String data, Exception e) {
-        return FailureMetaData.builder()
-                .failedClass(className)
-                .description(e.getMessage())
-                .precursorDataString(data)
-                .stackTrace(Throwables.getStackTraceAsString(e))
                 .timestamp(getTimeStamp())
                 .build();
     }

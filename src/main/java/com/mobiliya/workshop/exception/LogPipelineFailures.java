@@ -1,14 +1,11 @@
 package com.mobiliya.workshop.exception;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mobiliya.workshop.util.CommonConstants;
+import com.mobiliya.workshop.dataflow.pipeline.steps.JSONConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.beam.sdk.io.kafka.KafkaIO;
-import org.apache.beam.sdk.transforms.DoFn;
-import org.apache.beam.sdk.transforms.ParDo;
+import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.values.KV;
 import org.apache.beam.sdk.values.PCollection;
-import org.apache.beam.sdk.values.TupleTag;
 
 import java.io.Serializable;
 
@@ -16,9 +13,7 @@ import java.io.Serializable;
 @Slf4j
 public class LogPipelineFailures implements Serializable {
 
-  public static final TupleTag<KV<String, FailureMetaData>> FAILURE_TAG =
-      new TupleTag<KV<String, FailureMetaData>>() {};
-  private static final String FAILURE_TEXT = "LogFailures";
+    private static final String FAILURE_TEXT = "LogFailures";
 
   // Log the pipeline failures on queue
   public static void logFailuresToQueue(
@@ -28,23 +23,8 @@ public class LogPipelineFailures implements Serializable {
     failedRecords
         .apply(
             "Convert the failure metadata to JSON",
-            ParDo.of(
-                new DoFn<KV<String, FailureMetaData>, KV<String, String>>() {
-                  @ProcessElement
-                  public void processElement(
-                      @Element KV<String, FailureMetaData> inputJSON,
-                      ProcessContext processContext) {
-                    try {
-                      processContext.output(
-                          KV.of(
-                              inputJSON.getKey(),
-                              CommonConstants.objectMapper.writeValueAsString(
-                                  inputJSON.getValue())));
-                    } catch (JsonProcessingException e) {
-                      log.error("Error occured while converting failure meta data to json", e);
-                    }
-                  }
-                }))
+                MapElements.via(
+                        new JSONConverter()))
         .apply(
             FAILURE_TEXT.concat("Write failed records to Kafka"),
             KafkaIO.<String, String>write()

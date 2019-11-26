@@ -63,7 +63,7 @@ public class DataflowPipelineBuilder implements Serializable {
                                             CommonConstants.AUTO_OFFSET_RESET_KEY,
                                             CommonConstants.AUTO_OFFSET_RESET_VALUE))
                             .withoutMetadata())
-            .apply("Parse input and create Key Pair", ParDo.of(new JSONParser()).withOutputTags(CommonConstants.SUCCESS_TAG, TupleTagList.of(LogPipelineFailures.FAILURE_TAG)));
+            .apply("Parse input and create Key Pair", ParDo.of(new JSONParser()).withOutputTags(CommonConstants.SUCCESS_TAG, TupleTagList.of(CommonConstants.FAILURE_TAG)));
 
     //Get valid records to process.
     final PCollection<KV<String, String>> successRecords = inputLogRecords.get(CommonConstants.SUCCESS_TAG);
@@ -98,7 +98,7 @@ public class DataflowPipelineBuilder implements Serializable {
                             .withSuffix(CommonConstants.OUTPUT_FILE_SUFFIX));
 
     //Get invalid valid records to process.
-    final PCollection<KV<String, FailureMetaData>> failedRecords = inputLogRecords.get(LogPipelineFailures.FAILURE_TAG);
+    final PCollection<KV<String, FailureMetaData>> failedRecords = inputLogRecords.get(CommonConstants.FAILURE_TAG);
 
     //Process invalid records
     LogPipelineFailures.logFailuresToQueue(options.getKafkaBrokerUrl(), options.getFailureDataTopic(), failedRecords);
